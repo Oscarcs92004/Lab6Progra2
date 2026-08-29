@@ -74,4 +74,10 @@ public class Controlador {
     public String getRutaActual() {
         return sistema.getRutaActual();
     }
+
+    public InterpreteComandos getInterprete() {
+        return interprete;
+    }
+    
+    
 }

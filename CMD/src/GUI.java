@@ -115,13 +115,14 @@ public class GUI extends JFrame{
             
             if (!comando.isEmpty()) {
                 
-                consola.append("$ " + comando + "\n"); //                     raiz del sistema
+                consola.append("$ " + comando + "\n"); 
                 //llamar a logica//////////////////////////////////////////////////////////////////////////////
+                realizarAccion();
                 
                 entrada.setText("");
                 consola.setCaretPosition(consola.getDocument().getLength());
                 consola.append(" " + "\n");
-                consola.append(controlador.getRutaActual() + "\n");// Texto con raiz///////////////////////////
+                consola.append(controlador.getRutaActual() + "\n");
                 AjustarTamaño(contenedorScroll);
 
                 
@@ -162,7 +163,7 @@ public class GUI extends JFrame{
         
     }
     
-    public void agregatTexto(String texto, JPanel scroll){
+    public void agregartTexto(String texto){
         
         
         
@@ -173,6 +174,13 @@ public class GUI extends JFrame{
       
        
        
+    }
+    
+    
+    private void realizarAccion(){
+        String texto = controlador.getInterprete().ejecutar(entrada.getText());
+        agregartTexto(texto);
+        
     }
     
     
