@@ -8,6 +8,16 @@
  *
  * @author oscar
  */
-public class ComandoExit {
-    
+public class ComandoExit implements Comando{
+    public ComandoExit(SistemaArchivos sistema) {
+    }
+
+    @Override
+    public String ejecutar(String[] args) {
+
+        if (args.length != 0) {
+            return "Uso correcto: Exit";
+        }
+        return "EXIT_APP";
+    }
 }

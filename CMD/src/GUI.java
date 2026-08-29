@@ -29,7 +29,7 @@ public class GUI extends JFrame{
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.BLACK);
         setLocationRelativeTo(null);
-
+        setResizable(false);
         InitPanel();
         setVisible(true);
     }

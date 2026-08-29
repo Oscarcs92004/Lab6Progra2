@@ -21,12 +21,10 @@ public class InterpreteComandos {
         comandos.put("Date",new ComandoDate(sistema));
         comandos.put("Wr",new ComandoWr(sistema));
         comandos.put("Ap",new ComandoAp(sistema));
-        
-        //Comandos que faltan implementar
-        //comandos.put("Copy",new ComandoCopy(sistema));
-        //comandos.put("Info",new ComandoInfo(sistema));
-        //comandos.put("Cls",new ComandoCls(sistema));
-        //comandos.put("Exit",new ComandoExit(sistema));
+        comandos.put("Copy",new ComandoCopy(sistema));
+        comandos.put("Info",new ComandoInfo(sistema));
+        comandos.put("Cls",new ComandoCls(sistema));
+        comandos.put("Exit",new ComandoExit(sistema));
     }
 
     public String ejecutar(String entrada) {

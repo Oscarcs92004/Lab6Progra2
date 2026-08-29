@@ -26,20 +26,17 @@ public class ComandoAp implements Comando{
         File archivo = sistema.buscar(args[0]);
 
         if (!archivo.exists()) {
-            return "Error: El archivo \"" + args[0]
-                    + "\" no existe.";
+            return "Error: El archivo \"" + args[0] + "\" no existe.";
         }
 
         if (archivo.isDirectory()) {
-            return "Error: \"" + args[0]
-                    + "\" es una carpeta.";
+            return "Error: \"" + args[0] + "\" es una carpeta.";
         }
 
         return "MODO_APPEND";
     }
     
     public String agregar(File archivo, String contenido) {
-
         try {
             FileWriter escritor = new FileWriter(archivo, true);
             escritor.write(contenido);
