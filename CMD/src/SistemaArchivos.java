@@ -46,7 +46,66 @@ public class SistemaArchivos {
         return nuevoDir.mkdir();
     }
     
+    private boolean estaDentroDeRaiz(File archivo){
+        try {
+            String rutaRaiz = raiz.getCanonicalPath();
+            String rutaArchivo = archivo.getCanonicalPath();
+            return rutaArchivo.startsWith(rutaRaiz);
+        } catch (Exception e){
+            return false;
+        }
+    }
+    
     public boolean cambiarAnterior(){
+        if(actual.equals(raiz)){
+            return false;
+        }
         
+        File padre = actual.getParentFile();
+        
+        if(padre != null && estaDentroDeRaiz(padre)){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public boolean cambiarDir(String nombre){
+        File nuevoDir = new File(actual, nombre);
+        
+        if(!nuevoDir.exists()){
+            return false;
+        }
+        
+        if (!nuevoDir.isDirectory()) {
+            return false;
+        }
+
+        if (!estaDentroDeRaiz(nuevoDir)) {
+            return false;
+        }
+        
+        actual = nuevoDir;
+        return true;
+    }
+    
+    public boolean eliminar(File archivo){
+        if (!archivo.exists()) {
+            return false;
+        }
+
+        if (archivo.isDirectory()) {
+
+            File[] contenido = archivo.listFiles();
+
+            if (contenido != null) {
+
+                for (File elemento : contenido) {
+                    eliminar(elemento);
+                }
+            }
+        }
+
+        return archivo.delete();
     }
 }
