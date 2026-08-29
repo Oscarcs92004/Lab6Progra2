@@ -20,6 +20,14 @@ public class GUI extends JFrame{
     private JTextArea consola;
     private JTextField entrada;
     private Controlador controlador = new Controlador ();
+    private JPanel panelEditor;
+    private JTextArea areaEditor;
+    private JLabel editor;
+    private boolean modoEditor = false;
+    private boolean modoAppend = false;
+    private String archivoEditando;
+    private JPanel contenedorScroll;
+    private JPanel panelEntrada;
    
     public GUI(){
         super("CMD");
@@ -30,8 +38,54 @@ public class GUI extends JFrame{
         getContentPane().setBackground(Color.BLACK);
         setLocationRelativeTo(null);
         setResizable(false);
+        crearPanelEditor();
+        configurarEditor();
         InitPanel();
         setVisible(true);
+    }
+    
+    private void crearPanelEditor() {
+
+        panelEditor = new JPanel(new BorderLayout());
+        panelEditor.setBackground(Color.BLACK);
+        panelEditor.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        editor = new JLabel(" VIM - EDITOR ");
+        editor.setForeground(Color.GREEN);
+        editor.setBackground(Color.BLACK);
+        editor.setOpaque(true);
+        editor.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
+
+        panelEditor.add(editor, BorderLayout.NORTH);
+
+        areaEditor = new JTextArea();
+
+        areaEditor.setBackground(Color.BLACK);
+        areaEditor.setForeground(Color.GREEN);
+        areaEditor.setCaretColor(Color.WHITE);
+        areaEditor.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+
+        areaEditor.setLineWrap(true);
+        areaEditor.setWrapStyleWord(false);
+
+        areaEditor.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
+
+        JScrollPane scrollEditor = new JScrollPane(areaEditor);
+
+        scrollEditor.setBorder(null);
+        scrollEditor.setBackground(Color.BLACK);
+        scrollEditor.getViewport().setBackground(Color.BLACK);
+
+        panelEditor.add(scrollEditor,BorderLayout.CENTER);
+
+        JLabel lblAyuda =new JLabel(" ESC para cancelar | EXIT para guardar ");
+        lblAyuda.setForeground(Color.WHITE);
+        lblAyuda.setBackground(Color.BLACK);
+        lblAyuda.setOpaque(true);
+        lblAyuda.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        panelEditor.add(lblAyuda,BorderLayout.SOUTH);
+        panelEditor.setPreferredSize(new Dimension(800, 450));
+        panelEditor.setMinimumSize(new Dimension(800, 450));
+        panelEditor.setMaximumSize(new Dimension(800, 450));
     }
     
     public void InitPanel(){
@@ -67,7 +121,7 @@ public class GUI extends JFrame{
         scroll.getVerticalScrollBar().setBackground(Color.BLACK);
         scroll.getHorizontalScrollBar().setBackground(Color.BLACK);
 
-        JPanel contenedorScroll = new JPanel(new BorderLayout()){
+        contenedorScroll = new JPanel(new BorderLayout()){
             @Override
             public Dimension getMaximumSize(){
                 return getPreferredSize();
@@ -85,7 +139,7 @@ public class GUI extends JFrame{
         panel.add(contenedorScroll);
         
         
-        JPanel panelEntrada = new JPanel(new BorderLayout()){
+        panelEntrada = new JPanel(new BorderLayout()){
             @Override
             public Dimension getMaximumSize(){
                 return getPreferredSize();
@@ -181,9 +235,87 @@ public class GUI extends JFrame{
        
     }
     
+    private void mostrarEditor(String nombreArchivo, boolean append) {
+        modoEditor = true;
+        modoAppend = append;
+        archivoEditando = nombreArchivo;
+
+        editor.setText(append ? " VIM - APPEND: " + nombreArchivo + " " : " VIM - WRITE: " + nombreArchivo + " ");
+
+        if (append) {
+            areaEditor.setText(controlador.leerArchivoParaEditor(nombreArchivo));
+            areaEditor.setCaretPosition(areaEditor.getDocument().getLength());
+        } else {
+            areaEditor.setText("");
+        }
+
+        panel.removeAll();
+        panel.add(panelEditor);
+        panel.revalidate();
+        panel.repaint();
+
+        areaEditor.requestFocusInWindow();
+    }
+    
+    private void ocultarEditor() {
+        modoEditor = false;
+        panel.removeAll();
+        panel.add(contenedorScroll);
+        panel.add(panelEntrada);
+        panel.revalidate();
+        panel.repaint();
+        entrada.setText("");
+        entrada.requestFocusInWindow();
+    }
+    
+    private void guardarDesdeEditor(String contenido) {
+        String resultado = controlador.guardarDesdeEditor(archivoEditando, contenido, modoAppend);
+        ocultarEditor();
+        consola.append(resultado + "\n");
+        consola.append(controlador.getRutaActual() + "\n");
+        consola.setCaretPosition(consola.getDocument().getLength());
+        AjustarTamaño(contenedorScroll);
+    }
+    
+    private void procesarLineaEditor() {
+        areaEditor.replaceSelection("\n");
+
+        String texto = areaEditor.getText();
+        String[] lineas = texto.split("\n", -1);
+
+        if (lineas.length >= 2 && lineas[lineas.length - 2].trim().equals("EXIT")) {
+            StringBuilder contenido = new StringBuilder();
+            for (int i = 0; i < lineas.length - 2; i++) {
+                contenido.append(lineas[i]);
+                if (i < lineas.length - 3) {
+                    contenido.append(System.lineSeparator());
+                }
+            }
+            guardarDesdeEditor(contenido.toString());
+        }
+    }
+    
+    private void configurarEditor() {
+        areaEditor.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "procesarLinea");
+        areaEditor.getActionMap().put("procesarLinea", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                procesarLineaEditor();
+            }
+        });
+
+        areaEditor.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "cancelarEditor");
+        areaEditor.getActionMap().put("cancelarEditor", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                ocultarEditor();
+            }
+        });
+    }
     
     private boolean realizarAccion(){
         String texto = controlador.getInterprete().ejecutar(entrada.getText());
+        String comando = entrada.getText().trim();
         
         if(texto.equals("CLS")){
             consola.setText("");
@@ -193,6 +325,19 @@ public class GUI extends JFrame{
         if(texto.equals("EXIT_APP")){
             dispose();
             return false;
+        } 
+        
+        if(texto.equals("MODO_ESCRITURA")){
+            String[] partes = comando.split("\\s+");
+
+            mostrarEditor(partes[1],false);
+            return true;
+        } 
+        
+        if(texto.equals("MODO_APPEND")){
+            String[] partes = comando.split("\\s+");
+            mostrarEditor(partes[1],true);
+            return true;
         } 
         
         if(!texto.isEmpty()){

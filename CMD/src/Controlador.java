@@ -79,5 +79,28 @@ public class Controlador {
         return interprete;
     }
     
+    public String leerArchivoParaEditor(String nombreArchivo) {
+        File archivo = sistema.buscar(nombreArchivo);
+        if (archivo == null || !archivo.exists()) {
+            return "";
+        }
+        try {
+            return new String(java.nio.file.Files.readAllBytes(archivo.toPath()));
+        } catch (java.io.IOException e) {
+            return "";
+        }
+    }
+
+    public String guardarDesdeEditor(String nombreArchivo, String contenidoNuevo, boolean append) {
+        File archivo = sistema.buscar(nombreArchivo);
+        if (append) {
+            ComandoAp comando = new ComandoAp(sistema);
+            return comando.agregar(archivo, contenidoNuevo);
+        } else {
+            ComandoWr comando = new ComandoWr(sistema);
+            return comando.guardar(archivo, contenidoNuevo);
+        }
+    }
+    
     
 }
