@@ -8,6 +8,16 @@
  *
  * @author oscar
  */
-public class ComandoCls {
+public class ComandoCls implements Comando{
     
+    public ComandoCls(SistemaArchivos sistema) {
+    }
+
+    @Override
+    public String ejecutar(String[] args) {
+        if (args.length != 0) {
+            return "Uso correcto: Cls";
+        }
+        return "CLS";
+    }
 }
