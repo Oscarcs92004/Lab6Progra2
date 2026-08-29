@@ -28,6 +28,7 @@ public class GUI extends JFrame{
     private String archivoEditando;
     private JPanel contenedorScroll;
     private JPanel panelEntrada;
+    private int longitudContOriginal = 0;
    
     public GUI(){
         super("CMD");
@@ -244,9 +245,11 @@ public class GUI extends JFrame{
 
         if (append) {
             areaEditor.setText(controlador.leerArchivoParaEditor(nombreArchivo));
+            longitudContOriginal = areaEditor.getText().length();
             areaEditor.setCaretPosition(areaEditor.getDocument().getLength());
         } else {
             areaEditor.setText("");
+            longitudContOriginal = 0;
         }
 
         panel.removeAll();
@@ -281,18 +284,26 @@ public class GUI extends JFrame{
         areaEditor.replaceSelection("\n");
 
         String texto = areaEditor.getText();
-        String[] lineas = texto.split("\n", -1);
+        int finCont = texto.length() - 1;
+        int inicioUltLinea = texto.lastIndexOf('\n', finCont - 1) +1;
+        String ultimaLinea = texto.substring(inicioUltLinea, finCont).trim();
 
-        if (lineas.length >= 2 && lineas[lineas.length - 2].trim().equals("EXIT")) {
-            StringBuilder contenido = new StringBuilder();
-            for (int i = 0; i < lineas.length - 2; i++) {
-                contenido.append(lineas[i]);
-                if (i < lineas.length - 3) {
-                    contenido.append(System.lineSeparator());
-                }
-            }
-            guardarDesdeEditor(contenido.toString());
+        if (ultimaLinea.equals("EXIT")) {
+        String contenidoCompleto = texto.substring(0, inicioUltLinea);
+        if (contenidoCompleto.endsWith("\n")) {
+            contenidoCompleto = contenidoCompleto.substring(0, contenidoCompleto.length() - 1);
         }
+
+        String contenidoFinal = contenidoCompleto;
+        if (modoAppend) {
+            contenidoFinal = contenidoFinal.length() >= longitudContOriginal ? contenidoFinal.substring(longitudContOriginal) : "";
+            if (contenidoFinal.startsWith("\n")) {
+                contenidoFinal = contenidoFinal.substring(1);
+            }
+        }
+
+        guardarDesdeEditor(contenidoFinal);
+    }
     }
     
     private void configurarEditor() {
