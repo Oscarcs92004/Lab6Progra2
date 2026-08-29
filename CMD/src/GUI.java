@@ -117,13 +117,18 @@ public class GUI extends JFrame{
                 
                 consola.append("$ " + comando + "\n"); 
                 //llamar a logica//////////////////////////////////////////////////////////////////////////////
-                realizarAccion();
+                boolean continuar = realizarAccion();
                 
                 entrada.setText("");
+                if(!continuar){
+                    return;
+                }
                 consola.setCaretPosition(consola.getDocument().getLength());
                 consola.append(" " + "\n");
                 consola.append(controlador.getRutaActual() + "\n");
                 AjustarTamaño(contenedorScroll);
+                entrada.requestFocusInWindow();
+
 
                 
                
@@ -159,7 +164,7 @@ public class GUI extends JFrame{
          scroll.setMinimumSize(new Dimension(800, tamañoPixeles));
           scroll.setMaximumSize(new Dimension(800, tamañoPixeles));
         panel.repaint();
-       panel.revalidate();
+        panel.revalidate();
         
     }
     
@@ -177,10 +182,23 @@ public class GUI extends JFrame{
     }
     
     
-    private void realizarAccion(){
+    private boolean realizarAccion(){
         String texto = controlador.getInterprete().ejecutar(entrada.getText());
-        agregartTexto(texto);
         
+        if(texto.equals("CLS")){
+            consola.setText("");
+            return true;
+        } 
+       
+        if(texto.equals("EXIT_APP")){
+            dispose();
+            return false;
+        } 
+        
+        if(!texto.isEmpty()){
+            consola.append(texto + "\n");
+        }
+        return true;
     }
     
     
