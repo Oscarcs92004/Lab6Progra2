@@ -19,7 +19,8 @@ public class GUI extends JFrame{
     private JPanel panel;
     private JTextArea consola;
     private JTextField entrada;
-    
+    private Controlador controlador = new Controlador ();
+   
     public GUI(){
         super("CMD");
 
@@ -51,17 +52,20 @@ public class GUI extends JFrame{
         consola.setLineWrap(true);
         consola.setWrapStyleWord(true);
         consola.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
-        consola.append(" Win64 ~" + "\n");// ////////////////////////////////////////////marca de agua
+        consola.append(controlador.getRutaActual() + "\n");// ////////////////////////////////////////////marca de agua
 
         
         
         JScrollPane scroll = new JScrollPane(consola);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroll.setBackground(Color.BLACK);
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Color.BLACK);    
         scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scroll.setBackground(Color.BLACK);
+        scroll.getViewport().setBackground(Color.BLACK);
+        scroll.getVerticalScrollBar().setBackground(Color.BLACK);
+        scroll.getHorizontalScrollBar().setBackground(Color.BLACK);
 
         JPanel contenedorScroll = new JPanel(new BorderLayout()){
             @Override
@@ -71,9 +75,9 @@ public class GUI extends JFrame{
         };
         contenedorScroll.setBackground(Color.BLACK);
         contenedorScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        contenedorScroll.setPreferredSize(new Dimension(800, 50));
-        contenedorScroll.setMinimumSize(new Dimension(800, 50));
-        contenedorScroll.setMaximumSize(new Dimension(800, 50));
+        contenedorScroll.setPreferredSize(new Dimension(800, 20));
+        contenedorScroll.setMinimumSize(new Dimension(800, 20));
+        contenedorScroll.setMaximumSize(new Dimension(800, 20));
         contenedorScroll.add(scroll, BorderLayout.CENTER);
 
         
@@ -113,12 +117,11 @@ public class GUI extends JFrame{
                 
                 consola.append("$ " + comando + "\n"); //                     raiz del sistema
                 //llamar a logica//////////////////////////////////////////////////////////////////////////////
-                agregatTexto("Texto", contenedorScroll);
                 
                 entrada.setText("");
                 consola.setCaretPosition(consola.getDocument().getLength());
-                
-                consola.append("Win64 ~" + "\n");// Texto con raiz///////////////////////////
+                consola.append(" " + "\n");
+                consola.append(controlador.getRutaActual() + "\n");// Texto con raiz///////////////////////////
                 AjustarTamaño(contenedorScroll);
 
                 
@@ -164,7 +167,7 @@ public class GUI extends JFrame{
         
         
         
-        consola.append("CMD: " + texto + "\n");
+        consola.append( texto + "\n");
         consola.setCaretPosition(consola.getDocument().getLength());
         consola.append(" ");
       
