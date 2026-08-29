@@ -9,5 +9,5 @@
  * @author oscar
  */
 public interface Comando {
-    
+    String ejecutar(String[] args);
 }
