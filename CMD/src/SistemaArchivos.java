@@ -64,6 +64,7 @@ public class SistemaArchivos {
         File padre = actual.getParentFile();
         
         if(padre != null && estaDentroDeRaiz(padre)){
+            actual= padre;
             return true;
         }
         
