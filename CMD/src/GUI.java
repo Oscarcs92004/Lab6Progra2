@@ -25,7 +25,7 @@ public class GUI extends JFrame{
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 500);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout());
         getContentPane().setBackground(Color.BLACK);
         setLocationRelativeTo(null);
 
@@ -50,11 +50,9 @@ public class GUI extends JFrame{
         consola.setCaretColor(Color.WHITE);
         consola.setLineWrap(true);
         consola.setWrapStyleWord(true);
-        consola.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        consola.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
         consola.append(" Win64 ~" + "\n");// ////////////////////////////////////////////marca de agua
-        consola.setPreferredSize(new Dimension(800, 450));
-        consola.setMinimumSize(new Dimension(800, 450));
-        consola.setMaximumSize(new Dimension(800, 450));
+
         
         
         JScrollPane scroll = new JScrollPane(consola);
@@ -63,26 +61,50 @@ public class GUI extends JFrame{
         scroll.setBackground(Color.BLACK);
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Color.BLACK);    
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel contenedorScroll = new JPanel(new BorderLayout()){
+            @Override
+            public Dimension getMaximumSize(){
+                return getPreferredSize();
+            }
+        };
+        contenedorScroll.setBackground(Color.BLACK);
+        contenedorScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contenedorScroll.setPreferredSize(new Dimension(800, 50));
+        contenedorScroll.setMinimumSize(new Dimension(800, 50));
+        contenedorScroll.setMaximumSize(new Dimension(800, 50));
+        contenedorScroll.add(scroll, BorderLayout.CENTER);
 
         
         
-        panel.add(scroll);
+        panel.add(contenedorScroll);
         
         
-        JPanel panelEntrada = new JPanel(new BorderLayout());
+        JPanel panelEntrada = new JPanel(new BorderLayout()){
+            @Override
+            public Dimension getMaximumSize(){
+                return getPreferredSize();
+            }
+        };
         panelEntrada.setBackground(Color.BLACK);
-        panelEntrada.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
+        panelEntrada.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+        panelEntrada.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelEntrada.setPreferredSize(new Dimension(800, 20));
+        panelEntrada.setMinimumSize(new Dimension(800, 20));
+        panelEntrada.setMaximumSize(new Dimension(800, 20));
+        
         
         JLabel lblUsuario = new JLabel("$ ");
         lblUsuario.setForeground(Color.WHITE);
-        lblUsuario.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
+        lblUsuario.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
         
         entrada = new JTextField();
         
         entrada.setBackground(Color.BLACK);
         entrada.setForeground(Color.WHITE);
         entrada.setCaretColor(Color.WHITE);
-        entrada.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+        entrada.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
         
         entrada.addActionListener(e -> {
             String comando = entrada.getText().trim();
@@ -90,12 +112,18 @@ public class GUI extends JFrame{
             if (!comando.isEmpty()) {
                 
                 consola.append("$ " + comando + "\n"); //                     raiz del sistema
+                //llamar a logica//////////////////////////////////////////////////////////////////////////////
+                agregatTexto("Texto", contenedorScroll);
+                
                 entrada.setText("");
                 consola.setCaretPosition(consola.getDocument().getLength());
                 
-                consola.append(" Win64 ~" + "\n");// Texto con raiz///////////////////////////
+                consola.append("Win64 ~" + "\n");// Texto con raiz///////////////////////////
+                AjustarTamaño(contenedorScroll);
+
                 
-                //llamar a logica//////////////////////////////////////////////////////////////////////////////
+               
+                
                 
             }
         });
@@ -103,20 +131,46 @@ public class GUI extends JFrame{
         panelEntrada.add(lblUsuario, BorderLayout.WEST);
         panelEntrada.add(entrada, BorderLayout.CENTER);
         
-        panel.add(panelEntrada, BorderLayout.SOUTH);
+        panel.add(panelEntrada);
+
         
-        add(panel);
+        add(panel, BorderLayout.CENTER);
+
+        panel.revalidate();
+        panel.repaint();
     }
     
-    public void agregatTexto(String texto){
+    
+    private void AjustarTamaño(JPanel scroll){
+        int lineas = consola.getDocument().getDefaultRootElement().getElementCount();
+        
+        int tamañoPixeles= lineas *20;
+        
+        if (tamañoPixeles> 430){
+            tamañoPixeles=430;
+            
+        }
+        
+        scroll.setPreferredSize(new Dimension(800, tamañoPixeles));
+         scroll.setMinimumSize(new Dimension(800, tamañoPixeles));
+          scroll.setMaximumSize(new Dimension(800, tamañoPixeles));
+        panel.repaint();
+       panel.revalidate();
+        
+    }
+    
+    public void agregatTexto(String texto, JPanel scroll){
+        
+        
         
         
         consola.append("CMD: " + texto + "\n");
         consola.setCaretPosition(consola.getDocument().getLength());
         consola.append(" ");
+      
+       
        
     }
     
-   
-
+    
 }
