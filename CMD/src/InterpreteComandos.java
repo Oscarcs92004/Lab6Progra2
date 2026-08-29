@@ -25,6 +25,15 @@ public class InterpreteComandos {
         comandos.put("Info",new ComandoInfo(sistema));
         comandos.put("Cls",new ComandoCls(sistema));
         comandos.put("Exit",new ComandoExit(sistema));
+        comandos.put("Mfile", new ComandoMfile(sistema));
+        comandos.put("Cd", new ComandoCd(sistema));
+        comandos.put("Dir", new ComandoDir(sistema));
+        comandos.put("Time", new ComandoTime());
+        comandos.put("Rd", new ComandoRd(sistema));
+        comandos.put("Ren", new ComandoRen(sistema));
+        comandos.put("Find", new ComandoFind(sistema));
+        comandos.put("Tree", new ComandoTree(sistema));
+        comandos.put("Help", new ComandoHelp());
     }
 
     public String ejecutar(String entrada) {
